@@ -4,16 +4,23 @@ const app = express()
 app.use(express.json())
 
 
-/*
-* cpf-string
-* name - string
-* id - uuid 
-* statement ou lançamentos(creditos, debitos...) []
-*/
-
 const customers = []
-//Create an account
+//Middleware
+function verifyExistsAccountCPF (request, response, next) {
+    const { cpf } = request.headers
+    const customer = customers.find((customer) => customer.cpf === cpf )
 
+    if(!customer) {
+        return response.status(400).json({error: "Customer not found!"})
+    }
+
+    request.customer = customer
+
+    return next()
+}
+
+
+//Create an account
 app.post("/account", (request, response) => {
     const { cpf, name } = request.body
     
@@ -37,18 +44,10 @@ app.post("/account", (request, response) => {
 })
 
 // get statement- buscar o estrato bancario
-
-app.get("/statement", (request, response) => {
-    const { cpf } = request.headers
-
-    const customer = customers.find((customer) => customer.cpf === cpf )
-
-    if(!customer) {
-        return response.status(400).json({error: "Customer not found!"})
-    }
-
-    return response.json(customer.statement)
-   
+//app.use(verifyExistsAccountCPF)  usar pra que todas as rotas usam essa rota
+app.get("/statement", verifyExistsAccountCPF, (request, response) => { 
+    const { customer } = request  
+    return response.json(customer.statement)   
 })
 
 
