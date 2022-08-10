@@ -130,6 +130,16 @@ app.get("/account", verifyExistsAccountCPF, (request, response) => {
     return response.json(customer)
 } )
 
+//Delete account
+app.delete("/account",verifyExistsAccountCPF, (request, response) => {
+    const { customer } = request
+
+    customers.splice(customer, 1)
+
+    return response.status(200).json(customers)
+} ) 
+
+
 app.listen(8080)
 
 
