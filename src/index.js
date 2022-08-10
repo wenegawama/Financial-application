@@ -95,6 +95,49 @@ app.post("/withdraw", verifyExistsAccountCPF, (request, response) => {
     return response.status(201).send()
 })
 
+// Get statement with date
+
+app.get("/statement/date", verifyExistsAccountCPF, (request, response) => { 
+    const { customer } = request 
+    const { date } = request.query
+
+    const dateFormat = new Date(date + " 00:00") 
+    
+    const statement = customer.statement.filter(
+        (statement) =>
+            statement.created_at.toDateString() ===
+            new Date(dateFormat).toDateString()
+    )
+    
+    return response.json(statement)   
+})
+
+//Update account
+
+app.put("/account", verifyExistsAccountCPF, (request, response) => {
+    const { name } = request.body
+    const { customer } = request
+
+    customer.name = name
+
+    return response.status(201).send()
+})
+
+//Get information of account
+
+app.get("/account", verifyExistsAccountCPF, (request, response) => {
+    const { customer } = request
+    return response.json(customer)
+} )
+
+//Delete account
+app.delete("/account",verifyExistsAccountCPF, (request, response) => {
+    const { customer } = request
+
+    customers.splice(customer, 1)
+
+    return response.status(200).json(customers)
+} ) 
 
 
 app.listen(8080)
