@@ -112,6 +112,23 @@ app.get("/statement/date", verifyExistsAccountCPF, (request, response) => {
     return response.json(statement)   
 })
 
+//Update account
+
+app.put("/account", verifyExistsAccountCPF, (request, response) => {
+    const { name } = request.body
+    const { customer } = request
+
+    customer.name = name
+
+    return response.status(201).send()
+})
+
+//Get information of account
+
+app.get("/account", verifyExistsAccountCPF, (request, response) => {
+    const { customer } = request
+    return response.json(customer)
+} )
 
 app.listen(8080)
 
